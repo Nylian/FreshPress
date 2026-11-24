@@ -1,0 +1,85 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ formTitle }}{% endblock %}
+
+{% block body %}
+{% include 'partials/sidebar.html.twig' %}
+
+<div class="main">
+    <h1>{{ formTitle }}</h1>
+    <p>Enter the machine maintenance details below.</p>
+
+    <div style="background:white; padding:25px; border-radius:10px; max-width:700px;">
+        <form method="post">
+            <input type="hidden" name="_token"
+                   value="{{ csrf_token(record is not null ? 'maintenance_edit_' ~ record.id : 'maintenance_create') }}">
+
+            <div style="margin-bottom:15px;">
+                <label>Machine Name</label><br>
+                <input type="text" name="machineName"
+                       value="{{ record is not null ? record.machineName : '' }}" 
+                       required maxlength="100"
+                       style="width:100%; padding:10px; box-sizing:border-box;">
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label>Maintenance Type</label><br>
+                <select name="maintenanceType" required
+                        style="width:100%; padding:10px;">
+                    <option value="">Select Maintenance Type</option>
+                    {% for type in ['Routine Inspection', 'Cleaning', 'Repair', 'Parts Replacement', 'Other'] %}
+                        <option value="{{ type }}" {% if record is not null and record.maintenanceType == type %}selected{% endif %}>
+                            {{ type }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label>Maintenance Date</label><br>
+                <input type="date" name="maintenanceDate"
+        value="{{ record is not null and record.maintenanceDate ? record.maintenanceDate|date('Y-m-d') : '' }}"           
+         </div>
+
+            <div style="margin-bottom:15px;">
+                <label>Next Maintenance Date (Optional)</label><br>
+                <input type="date" name="nextMaintenanceDate"
+                       value="{{ record is not null and record.nextMaintenanceDate ? record.nextMaintenanceDate|date('Y-m-d') : '' }}"
+                       style="width:100%; padding:10px; box-sizing:border-box;">
+            </div>
+
+            <div style="margin-bottom:15px;">
+            <label>Status</label><br>
+
+            <select name="status" required
+            style="width:100%; padding:10px; color:#18344b; background-color:white; border:1px solid #ccc;">
+
+            {% for status in ['Scheduled', 'In Progress', 'Completed'] %}
+            <option value="{{ status }}"
+                    style="color:#18344b; background-color:white;"
+                {% if (record is not null and record.status == status) or (record is null and status == 'Scheduled') %}selected{% endif %}>
+                {{ status }}
+                </option>
+            {% endfor %}
+
+            </select>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <label>Description (Optional)</label><br>
+                <textarea name="description" rows="4"
+                          style="width:100%; padding:10px; box-sizing:border-box;">{{ record is not null ? record.description|default('') : '' }}</textarea>
+            </div>
+
+            <button type="submit"
+                    style="background:#176b9e; color:white; padding:11px 20px; border:none; border-radius:6px; cursor:pointer;">
+                Save Record
+            </button>
+
+            <a href="{{ path('app_machine_maintenance') }}"
+               style="margin-left:10px;">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

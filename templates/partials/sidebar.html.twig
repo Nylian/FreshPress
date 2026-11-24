@@ -1,0 +1,32 @@
+<div class="sidebar">
+    <div class="brand">
+        <img src="{{ asset('images/FreshPress.png') }}" alt="FreshPress Logo">
+        <h2>FreshPress</h2>
+        <p>LAUNDRY MANAGEMENT SYSTEM</p>
+    </div>
+
+    <div class="nav-title">Main Menu</div>
+    <a href="{{ path('app_dashboard') }}" class="nav-link {{ app.request.attributes.get('_route') == 'app_dashboard' ? 'active' : '' }}">▦ Dashboard</a>
+
+    <div class="nav-title">Management</div>
+    <a href="{{ path('app_customer') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_customer' ? 'active' : '' }}">♙ Customer Management</a>
+    <a href="{{ path('app_laundry_transaction') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_laundry_transaction' ? 'active' : '' }}">▧ Laundry Transactions</a>
+    <a href="{{ path('app_order') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_order' ? 'active' : '' }}">▣ Order Management</a>
+    <a href="{{ path('app_payment') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_payment' ? 'active' : '' }}">₱ Payment Management</a>
+    <a href="{{ path('app_inventory') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_inventory' ? 'active' : '' }}">▧ Inventory Management</a>
+    <a href="{{ path('app_sales') }}" class="nav-link {{ app.request.attributes.get('_route') == 'app_sales' ? 'active' : '' }}">▤ Sales Summary</a>
+    <a href="{{ path('app_expense') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_expense' ? 'active' : '' }}">₱ Expense Management</a>
+    <a href="{{ path('app_machine_maintenance') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_machine_maintenance' ? 'active' : '' }}">⚙ Machine Maintenance</a>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="nav-title">Administration</div>
+        <a href="{{ path('app_user_management') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_user_management' ? 'active' : '' }}">♙ User & Security</a>
+        <a href="{{ path('app_activity_logs') }}" class="nav-link {{ app.request.attributes.get('_route') == 'app_activity_logs' ? 'active' : '' }}">▤ Activity Logs</a>
+    {% endif %}
+
+    <div class="nav-title">Scheduling</div>
+    <a href="{{ path('app_pickup_schedule') }}" class="nav-link {{ app.request.attributes.get('_route') starts with 'app_pickup_schedule' ? 'active' : '' }}">▣ Pickup Scheduling</a>
+
+    <div class="nav-title">Account</div>
+    <a href="{{ path('app_logout') }}" class="nav-link">⇥ Logout</a>
+</div>

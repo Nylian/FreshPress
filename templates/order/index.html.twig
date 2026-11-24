@@ -1,0 +1,121 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Management | FreshPress{% endblock %}
+
+{% block body %}
+
+{% include 'partials/sidebar.html.twig' %}
+
+<div class="main">
+
+    <div class="topbar">
+        <div>
+            <h1>Order Management</h1>
+            <p>Monitor customer orders and track their progress.</p>
+        </div>
+        <div class="user-info">FreshPress Admin</div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="section" style="color: green;">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="section" style="color: red;">{{ message }}</div>
+    {% endfor %}
+
+    <div class="section">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
+            <div>
+                <h3>Customer Orders</h3>
+                <p style="color:#718397; font-size:13px; margin-top:5px;">
+                    View and update the status of laundry orders.
+                </p>
+            </div>
+
+            <form method="get" action="{{ path('app_order') }}" style="display:flex; gap:8px;">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search orders..."
+                    style="padding:10px; border:1px solid #d5dee8; border-radius:6px;"
+                >
+                <button type="submit" class="btn-primary">Search</button>
+            </form>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Transaction No.</th>
+                        <th>Customer</th>
+                        <th>Service</th>
+                        <th>Weight</th>
+                        <th>Total Amount</th>
+                        <th>Date Received</th>
+                        <th>Expected Pickup</th>
+                        <th>Order Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.transactionNumber }}</td>
+                            <td>
+                                {{ order.customer.firstName }}
+                                {{ order.customer.lastName }}
+                            </td>
+                            <td>{{ order.serviceType }}</td>
+                            <td>{{ order.weight }} kg</td>
+                            <td>₱{{ order.totalAmount|number_format(2) }}</td>
+                            <td>{{ order.dateReceived|date('M d, Y') }}</td>
+                            <td>{{ order.expectedPickupDate|date('M d, Y') }}</td>
+                            <td>
+                                <span class="status">{{ order.status }}</span>
+                            </td>
+                            <td>
+                                <form
+                                    method="post"
+                                    action="{{ path('app_order_update_status', {id: order.id}) }}"
+                                    style="display:flex; gap:5px; align-items:center;"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_token"
+                                        value="{{ csrf_token('order_status_' ~ order.id) }}"
+                                    >
+
+                                    <select name="status" style="padding:7px; border:1px solid #d5dee8; border-radius:5px;">
+                                        {% for status in statuses %}
+                                            <option value="{{ status }}" {% if order.status == status %}selected{% endif %}>
+                                                {{ status }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <button type="submit" class="btn-primary">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="9" style="text-align:center; padding:25px;">
+                                No orders found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

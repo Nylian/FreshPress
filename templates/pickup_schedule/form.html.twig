@@ -1,0 +1,135 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page_title }} | FreshPress{% endblock %}
+
+{% block body %}
+
+{% set selectedCustomer = formData.customer|default(schedule.customer ? schedule.customer.id : '') %}
+{% set selectedTransaction = formData.laundryTransaction|default(schedule.laundryTransaction ? schedule.laundryTransaction.id : '') %}
+{% set selectedDate = formData.pickupDate|default(schedule.pickupDate ? schedule.pickupDate|date('Y-m-d') : '') %}
+{% set selectedTime = formData.pickupTime|default(schedule.pickupTime ? schedule.pickupTime|date('H:i') : '') %}
+{% set selectedStatus = formData.status|default(schedule.status|default('Requested')) %}
+{% set selectedNotes = formData.notes|default(schedule.notes|default('')) %}
+
+{% include 'partials/sidebar.html.twig' %}
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <h1>{{ page_title }}</h1>
+            <p>Enter and manage the customer's pickup appointment.</p>
+        </div>
+        <div class="user-info">FreshPress Admin</div>
+    </div>
+
+    {% for message in app.flashes('error') %}
+        <div class="section" style="color:red;">{{ message }}</div>
+    {% endfor %}
+
+    <div class="section" style="max-width:750px;">
+        <form method="post" action="{{ form_action }}">
+
+            <input type="hidden" name="_token"
+                value="{{ csrf_token(csrf_token) }}">
+
+            <div style="margin-bottom:15px;">
+                <label>Customer</label>
+                <select name="customer" required
+                    style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px; color:#18344b; background:white;">
+                    <option value="">Select Customer</option>
+                    {% for customer in customers %}
+                        <option value="{{ customer.id }}"
+                            {% if selectedCustomer == customer.id %}selected{% endif %}>
+                            {{ customer.firstName }} {{ customer.lastName }} - {{ customer.phoneNumber }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label>Laundry Transaction (Optional)</label>
+                <select name="laundryTransaction"
+                    style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px; color:#18344b; background:white;">
+                    <option value="">No transaction linked</option>
+                    {% for transaction in transactions %}
+                        <option value="{{ transaction.id }}"
+                            {% if selectedTransaction == transaction.id %}selected{% endif %}>
+                            {{ transaction.transactionNumber }} -
+                            {{ transaction.customer.firstName }} {{ transaction.customer.lastName }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <small style="color:#718397;">
+                    If you select a transaction, it must belong to the selected customer.
+                </small>
+            </div>
+
+            <div style="display:flex; gap:15px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:200px; margin-bottom:15px;">
+                    <label>Pickup Date</label>
+                    <input type="date" name="pickupDate"
+                        value="{{ selectedDate }}"
+                        min="{{ 'now'|date('Y-m-d') }}"
+                        required
+                        style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px;">
+                </div>
+
+                <div style="flex:1; min-width:200px; margin-bottom:15px;">
+                    <label>Pickup Time</label>
+                    <input type="time" name="pickupTime"
+                        value="{{ selectedTime }}"
+                        required
+                        style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px;">
+                </div>
+            </div>
+
+            {% if schedule.id %}
+                <div style="margin-bottom:15px;">
+                    <label>Status</label>
+                    <select name="status" required
+                        style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px; color:#18344b; background:white;">
+                        {% for status in statuses %}
+                            <option value="{{ status }}"
+                                {% if selectedStatus == status %}selected{% endif %}>
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% else %}
+                <div style="margin-bottom:15px;">
+                    <label>Status</label>
+                    <input type="text" value="Requested" readonly
+                        style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px; background:#f4f7fb; color:#18344b;">
+                    <small style="color:#718397;">
+                        New pickup schedules automatically begin as Requested.
+                    </small>
+                </div>
+            {% endif %}
+
+            <div style="margin-bottom:15px;">
+                <label>Notes (Optional)</label>
+                <textarea name="notes" rows="4" maxlength="5000"
+                    placeholder="Enter pickup instructions or customer arrangements..."
+                    style="width:100%; padding:10px; margin-top:5px; border:1px solid #d5dee8; border-radius:6px;">{{ selectedNotes }}</textarea>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button type="submit" class="btn-primary"
+                    style="border:none; padding:11px 18px; cursor:pointer;">
+                    Save Pickup Schedule
+                </button>
+
+                <a href="{{ path('app_pickup_schedule') }}"
+                    class="btn-primary"
+                    style="text-decoration:none; padding:11px 18px; background:#718397;">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

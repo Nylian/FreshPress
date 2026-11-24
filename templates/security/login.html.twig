@@ -1,0 +1,336 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Login | FreshPress{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        min-height: 100vh;
+        background: #eef3f8;
+        font-family: Arial, sans-serif;
+    }
+
+    .login-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 35px 20px;
+    }
+
+    .login-container {
+        width: 100%;
+        max-width: 1000px;
+        min-height: 570px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 15px 45px rgba(7, 59, 96, 0.12);
+    }
+
+    .login-brand {
+        background: linear-gradient(145deg, #073b60, #0b5684);
+        color: white;
+        padding: 55px 45px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .login-logo {
+        width: 190px;
+        height: 155px;
+        object-fit: contain;
+        background: white;
+        border-radius: 14px;
+        padding: 10px;
+        margin-bottom: 30px;
+    }
+
+    .login-brand h1 {
+        font-size: 30px;
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+    }
+
+    .login-brand p {
+        color: #d5eaf6;
+        font-size: 14px;
+        line-height: 1.8;
+        max-width: 330px;
+    }
+
+    .login-form-panel {
+        padding: 65px 55px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .login-heading {
+        margin-bottom: 35px;
+    }
+
+    .login-heading .eyebrow {
+        color: #1680b5;
+        font-size: 12px;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .login-heading h2 {
+        color: #073b60;
+        font-size: 29px;
+        margin-bottom: 10px;
+    }
+
+    .login-heading p {
+        color: #78899a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .login-alert {
+        background: #fff0f0;
+        color: #b42318;
+        border: 1px solid #ffd4d4;
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .login-group {
+        margin-bottom: 22px;
+    }
+
+    .login-group label {
+        display: block;
+        color: #29465d;
+        font-size: 13px;
+        font-weight: bold;
+        margin-bottom: 9px;
+    }
+
+    .login-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #dce5ed;
+        border-radius: 8px;
+        padding: 0 14px;
+        font-size: 14px;
+        color: #18344b;
+        outline: none;
+        background: #fbfdff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-input:focus {
+        border-color: #1680b5;
+        box-shadow: 0 0 0 3px rgba(22, 128, 181, 0.12);
+        background: white;
+    }
+
+    .password-wrapper {
+        position: relative;
+    }
+
+    .password-wrapper .login-input {
+        padding-right: 75px;
+    }
+
+    .toggle-password {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: none;
+        color: #1680b5;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .login-button {
+        width: 100%;
+        height: 49px;
+        background: #0b5684;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: background 0.2s, transform 0.2s;
+    }
+
+    .login-button:hover {
+        background: #073b60;
+        transform: translateY(-1px);
+    }
+
+    .login-footer {
+        color: #91a0ae;
+        font-size: 11px;
+        text-align: center;
+        margin-top: 35px;
+    }
+
+    @media (max-width: 750px) {
+        .login-container {
+            max-width: 470px;
+            grid-template-columns: 1fr;
+        }
+
+        .login-brand {
+            padding: 35px 25px;
+        }
+
+        .login-logo {
+            width: 130px;
+            height: 105px;
+            margin-bottom: 18px;
+        }
+
+        .login-brand h1 {
+            font-size: 24px;
+        }
+
+        .login-form-panel {
+            padding: 40px 28px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-page">
+    <div class="login-container">
+
+        <div class="login-brand">
+            <img
+                src="{{ asset('images/FreshPress.png') }}"
+                alt="FreshPress Logo"
+                class="login-logo"
+            >
+
+            <h1>FreshPress</h1>
+            <p>
+                LAUNDRY MANAGEMENT SYSTEM
+            </p>
+
+            <p style="margin-top: 22px;">
+                Making laundry management easier, organized,
+                and more efficient.
+            </p>
+        </div>
+
+        <div class="login-form-panel">
+
+            <div class="login-heading">
+                <div class="eyebrow">Welcome Back</div>
+                <h2>Sign in to your account</h2>
+                <p>Enter your account credentials to access the system.</p>
+            </div>
+
+            {% if error %}
+                <div class="login-alert">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
+            {% if app.user %}
+                <div class="login-alert">
+                    You are already logged in as
+                    {{ app.user.userIdentifier }}.
+                    <a href="{{ path('app_dashboard') }}">Go to Dashboard</a>
+                </div>
+            {% endif %}
+
+            <form method="post">
+
+                <div class="login-group">
+                    <label for="username">Email Address</label>
+                    <input
+                        type="email"
+                        value="{{ last_username }}"
+                        name="_username"
+                        id="username"
+                        class="login-input"
+                        placeholder="Enter your email address"
+                        autocomplete="email"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="login-group">
+                    <label for="password">Password</label>
+
+                    <div class="password-wrapper">
+                        <input
+                            type="password"
+                            name="_password"
+                            id="password"
+                            class="login-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle-password"
+                            id="togglePassword"
+                            aria-label="Show password"
+                        >
+                            Show
+                        </button>
+                    </div>
+                </div>
+
+                <input
+                    type="hidden"
+                    name="_csrf_token"
+                    value="{{ csrf_token('authenticate') }}"
+                >
+
+                <button type="submit" class="login-button">
+                    Sign In
+                </button>
+
+            </form>
+
+            <div class="login-footer">
+                © {{ "now"|date("Y") }} FreshPress Laundry Management System
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+        const isHidden = passwordInput.type === 'password';
+
+        passwordInput.type = isHidden ? 'text' : 'password';
+        togglePassword.textContent = isHidden ? 'Hide' : 'Show';
+        togglePassword.setAttribute(
+            'aria-label',
+            isHidden ? 'Hide password' : 'Show password'
+        );
+    });
+</script>
+{% endblock %}

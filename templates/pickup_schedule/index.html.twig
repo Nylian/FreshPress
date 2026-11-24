@@ -1,0 +1,110 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Pickup Scheduling | FreshPress{% endblock %}
+
+{% block body %}
+
+{% include 'partials/sidebar.html.twig' %}
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <h1>Pickup Scheduling</h1>
+            <p>Manage and monitor customer pickup appointments.</p>
+        </div>
+        <div class="user-info">FreshPress Admin</div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="section" style="color:green;">{{ message }}</div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="section" style="color:red;">{{ message }}</div>
+    {% endfor %}
+
+    <div class="section">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
+            <div>
+                <h3>Pickup Records</h3>
+                <p style="color:#718397; font-size:13px; margin-top:5px;">
+                    View, schedule, and update customer pickup appointments.
+                </p>
+            </div>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <form method="get" action="{{ path('app_pickup_schedule') }}" style="display:flex; gap:8px;">
+                    <input type="text" name="search" value="{{ search }}"
+                        placeholder="Search pickups..."
+                        style="padding:10px; border:1px solid #d5dee8; border-radius:6px;">
+                    <button type="submit" class="btn-primary">Search</button>
+                </form>
+
+                <a href="{{ path('app_pickup_schedule_new') }}" class="btn-primary"
+                    style="text-decoration:none; padding:10px 14px;">+ Schedule Pickup</a>
+            </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Phone Number</th>
+                        <th>Transaction</th>
+                        <th>Pickup Date</th>
+                        <th>Pickup Time</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for schedule in schedules %}
+                        <tr>
+                            <td>{{ schedule.id }}</td>
+                            <td>{{ schedule.customer.firstName }} {{ schedule.customer.lastName }}</td>
+                            <td>{{ schedule.customer.phoneNumber }}</td>
+                            <td>
+                                {{ schedule.laundryTransaction
+                                    ? schedule.laundryTransaction.transactionNumber
+                                    : 'Not linked' }}
+                            </td>
+                            <td>{{ schedule.pickupDate|date('M d, Y') }}</td>
+                            <td>{{ schedule.pickupTime|date('h:i A') }}</td>
+                            <td>
+                                {% set statusColors = {
+                                    'Requested': '#f0ad4e',
+                                    'Confirmed': '#176b9e',
+                                    'Completed': '#198754',
+                                    'Cancelled': '#dc3545'
+                                } %}
+
+                                <span style="display:inline-block; padding:5px 9px; border-radius:5px; color:white; background:{{ statusColors[schedule.status]|default('#718397') }};">
+                                    {{ schedule.status }}
+                                </span>
+                            </td>
+                            <td>{{ schedule.notes ?: 'â€”' }}</td>
+                            <td style="white-space:nowrap;">
+                                <a href="{{ path('app_pickup_schedule_edit', {'id': schedule.id}) }}"
+                                    class="btn-primary"
+                                    style="text-decoration:none; padding:7px 10px;">Edit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="9" style="text-align:center; padding:25px;">
+                                No pickup schedules found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

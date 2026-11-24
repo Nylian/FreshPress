@@ -1,0 +1,89 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Machine Maintenance{% endblock %}
+
+{% block body %}
+{% include 'partials/sidebar.html.twig' %}
+
+<div class="main">
+    <h1>Machine Maintenance</h1>
+    <p>Monitor and manage laundry machine maintenance records.</p>
+
+    <div style="display:flex; gap:20px; margin:20px 0;">
+        <div style="background:white; padding:20px; border-radius:10px; flex:1;">
+            <h3>Total Records</h3>
+            <h2>{{ records|length }}</h2>
+        </div>
+        <div style="background:white; padding:20px; border-radius:10px; flex:1;">
+            <h3>Upcoming Maintenance</h3>
+            <h2>{{ upcomingCount }}</h2>
+        </div>
+    </div>
+
+    <a href="{{ path('app_machine_maintenance_new') }}"
+       style="display:inline-block; background:#176b9e; color:white; padding:10px 16px; border-radius:6px; text-decoration:none; margin-bottom:20px;">
+        + Add Maintenance Record
+    </a>
+
+    <form method="get" action="{{ path('app_machine_maintenance') }}" style="margin-bottom:20px;">
+        <input type="text" name="search" value="{{ search }}"
+               placeholder="Search machine, maintenance type, or status..."
+               style="padding:10px; width:300px; max-width:100%;">
+        <button type="submit" style="padding:10px 16px;">Search</button>
+        <a href="{{ path('app_machine_maintenance') }}">Clear</a>
+    </form>
+
+    <div style="background:white; padding:20px; border-radius:10px; overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse;">
+            <thead>
+                <tr style="background:#eaf1f6;">
+                    <th style="padding:12px;">ID</th>
+                    <th style="padding:12px;">Machine Name</th>
+                    <th style="padding:12px;">Maintenance Type</th>
+                    <th style="padding:12px;">Maintenance Date</th>
+                    <th style="padding:12px;">Next Maintenance</th>
+                    <th style="padding:12px;">Status</th>
+                    <th style="padding:12px;">Description</th>
+                    <th style="padding:12px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td style="padding:12px;">{{ record.id }}</td>
+                        <td style="padding:12px;">{{ record.machineName }}</td>
+                        <td style="padding:12px;">{{ record.maintenanceType }}</td>
+                        <td style="padding:12px;">{{ record.maintenanceDate|date('M d, Y') }}</td>
+                        <td style="padding:12px;">
+                            {{ record.nextMaintenanceDate ? record.nextMaintenanceDate|date('M d, Y') : 'Not scheduled' }}
+                        </td>
+                        <td style="padding:12px;">{{ record.status }}</td>
+                        <td style="padding:12px;">{{ record.description ?: 'â€”' }}</td>
+                        <td style="padding:12px; white-space:nowrap;">
+                            <a href="{{ path('app_machine_maintenance_edit', {id: record.id}) }}">Edit</a>
+
+                            <form method="post"
+                                  action="{{ path('app_machine_maintenance_delete', {id: record.id}) }}"
+                                  onsubmit="return confirm('Delete this maintenance record?');"
+                                  style="display:inline;">
+                                <input type="hidden" name="_token"
+                                       value="{{ csrf_token('delete_maintenance_' ~ record.id) }}">
+                                <button type="submit" style="color:red; border:none; background:none; cursor:pointer;">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="padding:20px; text-align:center;">
+                            No maintenance records found.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

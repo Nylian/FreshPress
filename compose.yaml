@@ -1,0 +1,37 @@
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: freshpress-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3312:3306"
+    volumes:
+      - freshpress-db-data:/var/lib/mysql
+    networks:
+      - freshpress-network
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: freshpress-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: database
+    ports:
+      - "8086:80"
+    depends_on:
+      - database
+    networks:
+      - freshpress-network
+
+volumes:
+  freshpress-db-data:
+
+networks:
+  freshpress-network:
+    driver: bridge
